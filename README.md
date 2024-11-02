@@ -8,7 +8,7 @@ Welcome to **2D-Adventure**! This is a 2D platformer game where players navigate
 
 1. Clone the repository or download the zip file.
 2. Open the project in Unity.
-3. Ensure you have the necessary Unity version installed (e.g., Unity 2021.3.0f1).
+3. Ensure you have the necessary Unity version installed (e.g., Unity 2022.3.46f1).
 4. Open the scene named **UserEntry** to start playing.
 5. Press the play button in Unity to test the game.
 
