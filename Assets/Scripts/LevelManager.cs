@@ -9,9 +9,12 @@ public class LevelManager : MonoBehaviour
     [SerializeField] Text coinText;
     [SerializeField] Image healthImage;
     [SerializeField] HealthController adventurerHealth;
+    [SerializeField] GameObject healthPrefab;
     [SerializeField] GameObject keyPrefab;
+    [SerializeField] GameObject jumperPrefab;
     [SerializeField] GameObject keyIcon;
-    
+    [SerializeField] GameObject jumperIcon;
+
     [SerializeField] GameObject doorMid;  
     [SerializeField] GameObject doorTop; 
     [SerializeField] Sprite doorClosedMid; 
@@ -39,15 +42,37 @@ public class LevelManager : MonoBehaviour
 
         if (coins.Length > 0)
         {
-            int randomIndex = Random.Range(0, coins.Length);
-            GameObject randomCoin = coins[randomIndex];
-            GameObject keyObject = Instantiate(keyPrefab, randomCoin.transform.position, Quaternion.identity);
+            int keyIndex = Random.Range(0, coins.Length);
+            int healthIndex, jumperIndex;
+
+            do
+            {
+                healthIndex = Random.Range(0, coins.Length);
+            } while (healthIndex == keyIndex);
+            
+            do
+            {
+                jumperIndex = Random.Range(0, coins.Length);
+            } while (jumperIndex == keyIndex || jumperIndex == healthIndex);  // Ensure jumper is not placed in key or health spot
+            
+            GameObject randomKeyCoin = coins[keyIndex];
+            GameObject keyObject = Instantiate(keyPrefab, randomKeyCoin.transform.position, Quaternion.identity);
             keyObject.SetActive(true);
-            Destroy(randomCoin);
+            Destroy(randomKeyCoin);
+    
+            GameObject randomHealthCoin = coins[healthIndex];
+            GameObject healthObject = Instantiate(healthPrefab, randomHealthCoin.transform.position, Quaternion.identity);
+            healthObject.SetActive(true);
+            Destroy(randomHealthCoin);
+            
+            GameObject randomJumperCoin = coins[jumperIndex];
+            GameObject jumperObject = Instantiate(jumperPrefab, randomJumperCoin.transform.position, Quaternion.identity); 
+            jumperObject.SetActive(true);
+            Destroy(randomJumperCoin);
         }
         else
         {
-            Debug.LogWarning("No coins found to replace with a key.");
+            Debug.LogWarning("No coins found to replace with a key or health collectible.");
         }
     }
     
@@ -89,6 +114,16 @@ public class LevelManager : MonoBehaviour
     public bool HasKey()
     {
         return hasKey;
+    }    
+    
+    public void ShowJumperIcon()
+    {
+        jumperIcon.SetActive(true); 
+    }
+
+    public void HideJumperIcon()
+    {
+        jumperIcon.SetActive(false);
     }
 
     private void OnEnable()

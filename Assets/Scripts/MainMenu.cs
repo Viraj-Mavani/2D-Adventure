@@ -16,13 +16,16 @@ public class MainManu : MonoBehaviour
     {
         string username = PlayerPrefs.GetString("Username", "Player"); 
 
-        if (greetingText != null)
-            greetingText.text = $"Hey! {username}";
-        else
+        if (greetingText == null)
         {
-            Debug.LogError("TMP_Text component not assigned to greetingText.");
-            greetingText.text = "Hey! Player";
+            PlayerPrefs.SetString("Username", "Player");
+            PlayerPrefs.Save(); 
+            
+            Debug.Log($"Mainmanu username: {username}");
+            username = PlayerPrefs.GetString("Username", "Player"); 
         }
+
+        greetingText.text = $"Hey! {username}";
     }
     
     public void StartGame()

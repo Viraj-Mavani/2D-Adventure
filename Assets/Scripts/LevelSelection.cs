@@ -21,33 +21,6 @@ public class LevelSelection : MonoBehaviour
     
     public void LoadLevel(string levelName)
     {
-        if (levelName == "GameOver")
-        {
-            SoundManager.Instance.PlayGameCompleteSound();
-
-            float completionTime = Time.timeSinceLevelLoad;
-            PlayerPrefs.SetFloat("CompletionTime", completionTime);
-            Debug.Log("Completion Time saved: " + completionTime);
-
-            LeaderboardManager leaderboardManager = FindObjectOfType<LeaderboardManager>();
-            if (leaderboardManager != null)
-                leaderboardManager.AddNewScore();
-            
-            PlayerPrefs.Save();
-        }
-        
-        // Debugging: Check if the CompletionTime key exists and log its value
-        if (PlayerPrefs.HasKey("CompletionTime"))
-        {
-            float savedCompletionTime = PlayerPrefs.GetFloat("CompletionTime");
-            Debug.Log("Completion Time loaded: " + savedCompletionTime);
-        }
-        else
-        {
-            Debug.Log("No Completion Time found in PlayerPrefs.");
-        }
-
-        Debug.Log("Loading Level:" + levelName);
         SceneManager.LoadScene(levelName);
         Time.timeScale = 1f;
         PauseManu.isPaused = false;

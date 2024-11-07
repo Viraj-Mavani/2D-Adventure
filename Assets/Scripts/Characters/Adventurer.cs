@@ -7,6 +7,8 @@ public class Adventurer : MonoBehaviour
     [SerializeField] private bool doubleJump = true;
     private int maxJumps = 1;
     private int jumps = 0;
+    private bool canTripleJump = false;
+    private bool jumperUsed = false;  // Flag to track if the Jumper has been used
 
     [HideInInspector] public HealthController health;
 
@@ -91,6 +93,12 @@ public class Adventurer : MonoBehaviour
                     animator.Play("Jump");
                 else
                     character.Jump();
+                
+                if (jumps == 3 && canTripleJump && !jumperUsed)
+                {
+                    jumperUsed = true;
+                    DisableJumperPowerUp();
+                }
             }
         }
         else if (isJumping)
@@ -120,5 +128,24 @@ public class Adventurer : MonoBehaviour
     public void OnCrouching(bool isCrouching)
     {
         animator.SetBool("IsCrouching", isCrouching);
+    }
+    
+    // Enable triple jump ability when collected
+    public void EnableJumperPowerUp()
+    {
+        if (!jumperUsed) 
+        {
+            maxJumps = 3; 
+            canTripleJump = true;
+            LevelManager.Instance.ShowJumperIcon();
+        }
+    }
+
+    // Reset jumper power-up when player dies or levels up
+    public void DisableJumperPowerUp()
+    {
+        maxJumps = doubleJump ? 2 : 1;  // Reset back to double jump or single jump
+        canTripleJump = false;
+        LevelManager.Instance.HideJumperIcon();  // Hide Jumper icon from HUD
     }
 }

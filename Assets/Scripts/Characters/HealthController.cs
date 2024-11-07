@@ -1,4 +1,6 @@
 ﻿using UnityEngine;
+using System.Collections;
+using UnityEngine.SceneManagement;
 
 public class HealthController : MonoBehaviour
 {
@@ -29,8 +31,10 @@ public class HealthController : MonoBehaviour
         {
             isDead = true;
             if (gameObject.CompareTag("Player"))
+            {
                 SoundManager.Instance.PlayLoseSound();
-            
+                StartCoroutine(RestartLevelAfterDelay(3f));
+            }
             Death();
         }
         else
@@ -72,4 +76,10 @@ public class HealthController : MonoBehaviour
     }
 
     public void StopHurt() => Hurt(false);
+    
+    private IEnumerator RestartLevelAfterDelay(float delay)
+    {
+        yield return new WaitForSeconds(delay);
+        SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+    }
 }

@@ -1,102 +1,102 @@
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 public class LeaderboardManager : MonoBehaviour
 {
+    public Button leaderboardButton;
     public Transform leaderboardContent;
     public GameObject leaderboardEntryPrefab;
     public GameObject leaderboardPanel;
     private List<(string, float)> leaderboard = new List<(string, float)>();
+    public static LeaderboardManager Instance { get; private set; }
     
     private void Start()
-    {
+    {        
+        if (leaderboardButton != null)
+            leaderboardButton.onClick.AddListener(ShowLeaderboard);
+        
         LoadLeaderboard();
-    }
-
-    public void AddNewScore()
-    {
-        string username = PlayerPrefs.GetString("Username");
-        float completionTime = PlayerPrefs.GetFloat("CompletionTime");
-
-        if (string.IsNullOrEmpty(username) || completionTime == 0)
-        {
-            Debug.LogError("No username or completion time found.");
-            return;
-        }
-        
-        Debug.Log($"Adding score: {username} - {completionTime}");
-        leaderboard.Add((username, completionTime));
-        leaderboard.Sort((x, y) => x.Item2.CompareTo(y.Item2));
-        Debug.Log($"Added score: {username} - {completionTime:F2}");
-
-        SaveLeaderboard();
-        DisplayLeaderboard();
-    }
-
-    public void DisplayLeaderboard()
-    {
-        foreach (Transform child in leaderboardContent)
-        {
-            Destroy(child.gameObject);
-        }
-        
-        Debug.Log("Displaying leaderboard entries...");
-
-        foreach (var entry in leaderboard)
-        {
-            Debug.Log($"Username: {entry.Item1}, Time: {entry.Item2}");
-
-            GameObject newEntry = Instantiate(leaderboardEntryPrefab, leaderboardContent);
-            TMP_Text entryText = newEntry.GetComponent<TMP_Text>();
-            if (entryText != null)
-            {
-                entryText.text = $"{entry.Item1}: {entry.Item2:F2} seconds";
-            }
-            else
-            {
-                Debug.LogError("Leaderboard entry prefab is missing a Text component.");
-            }
-        }
-        Debug.Log($"Total entries displayed: {leaderboard.Count}");
-        Debug.Log($"leaderboard: {leaderboard}");
     }
 
     public void LoadLeaderboard()
     {
         leaderboard.Clear();
-        
-        Debug.Log("Loading leaderboard entries...");
-        
+        leaderboard = LoadLeaderboardFromPlayerPrefs();
+        DisplayLeaderboard();
+    }
+    
+    private List<(string, float)> LoadLeaderboardFromPlayerPrefs()
+    {
+        List<(string, float)> leaderboard = new List<(string, float)>();
+
         for (int i = 0; i < 10; i++)
         {
             string username = PlayerPrefs.GetString($"Leaderboard_Username_{i}", "");
             float time = PlayerPrefs.GetFloat($"Leaderboard_Time_{i}", float.MaxValue);
 
-            if (!string.IsNullOrEmpty(username))
+            if (!string.IsNullOrEmpty(username) && time != float.MaxValue)
             {
                 leaderboard.Add((username, time));
                 Debug.Log($"Loaded leaderboard entry: {username} - {time:F2} seconds");
             }
         }
         Debug.Log($"Total leaderboard entries loaded: {leaderboard.Count}");
+
+        return leaderboard;
     }
 
-    private void SaveLeaderboard()
+    public void DisplayLeaderboard()
     {
-        for (int i = 0; i < leaderboard.Count && i < 10; i++)
-        {
-            PlayerPrefs.SetString($"Leaderboard_Username_{i}", leaderboard[i].Item1);
-            PlayerPrefs.SetFloat($"Leaderboard_Time_{i}", leaderboard[i].Item2);
-        }
-        PlayerPrefs.Save();
+        foreach (Transform child in leaderboardContent)
+            Destroy(child.gameObject);
         
-        // Debugging: Log the PlayerPrefs entries
+        if (leaderboard.Count == 0)
+        {
+            GameObject newEntry = Instantiate(leaderboardEntryPrefab, leaderboardContent);
+            newEntry.SetActive(true);
+
+            TMP_Text entryText = newEntry.GetComponent<TMP_Text>();
+            if (entryText != null)
+                entryText.text = "No records!";
+        }
+        else
+        {
+            int count = 0;
+            foreach (var entry in leaderboard)
+            {
+                if (count >= 3) break;
+
+                Debug.Log($"Username: {entry.Item1}, Time: {entry.Item2}");
+
+                GameObject newEntry = Instantiate(leaderboardEntryPrefab, leaderboardContent);
+                newEntry.SetActive(true);
+            
+                TMP_Text entryText = newEntry.GetComponent<TMP_Text>();
+                if (entryText != null)
+                    entryText.text = $"{entry.Item1}: {entry.Item2:F2} seconds";
+
+                count++;
+            }
+        }
+    }
+    
+    public void ClearLeaderboard()
+    {
         for (int i = 0; i < 10; i++)
         {
-            Debug.Log($"PlayerPrefs Entry - Username: {PlayerPrefs.GetString($"Leaderboard_Username_{i}")}, Time: {PlayerPrefs.GetFloat($"Leaderboard_Time_{i}")}");
+            PlayerPrefs.DeleteKey($"Leaderboard_Username_{i}");
+            PlayerPrefs.DeleteKey($"Leaderboard_Time_{i}");
         }
+
+        PlayerPrefs.Save();
+
+        leaderboard.Clear();
+        DisplayLeaderboard();
+
+        Debug.Log("Leaderboard has been cleared.");
     }
     
     public void ShowLeaderboard()
@@ -113,4 +113,5 @@ public class LeaderboardManager : MonoBehaviour
     {
         leaderboardPanel.SetActive(false);
     }
+
 }
