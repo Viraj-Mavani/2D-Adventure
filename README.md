@@ -22,21 +22,26 @@ The main objective of the game is to complete each level as quickly as possible 
   - **Left Arrow / A:** Move left
   - **Right Arrow / D:** Move right
   - **Up Arrow / W:** Jump
-  - **Space:** Attack
+  - **Space (Hold):** Attack
 - **Pause:** 
   - **Escape:** Open the pause menu
 
 ### Game Mechanics
 - **Levels:** Navigate through different levels, each with unique challenges and enemies.
-- **Collectibles:** Gather items to gain power-ups or points.
+- **Collectibles:** Gather items to gain power-ups or points:
+  - **Coins:** Gain Points.
+  - **Health:** Restores player health.
+  - **Jumper:** Allows the player to jump three times (single use).
 - **Timer:** The timer starts when the level begins and stops upon completing the Game.
-- **Death and Respawn:** Players can respawn at checkpoints(Level) if they lose a life.
+- **Death and Respawn:** Players can respawn at checkpoints(Level) if they lose a life with **level automatically reset time of 3 seconds**.
 - **Leaderboard:** Players can view their completion times and compare them with others.
 
 ## Features
 - **Two Levels:** Currently includes two playable levels with increasing difficulty.
-- **Health System:** Players and enemies share a health functionality.
-- **Leaderboard System:** Displays the top scores based on completion time.
+- **Health System:** Players and enemies share a health functionality with power-up like health regeneration.
+- **Power-Ups:** Collect Health power-ups to restore health and Jumper power-ups to gain a third jump (single use).
+- **Leaderboard System:** Displays the top three scores based on completion time.
+- **Level reset:** Level automatically resets after 3 seconds of dying.
 - **Sound Effects:** Includes sound effects for actions like jumping, collecting items, and level completion.
 
 ## Leaderboard
@@ -46,7 +51,8 @@ The leaderboard tracks the fastest completion times for players. It shows the us
 ### How to View the Leaderboard
 1. Click on the **Leaderboard** button in the main menu.
 2. The leaderboard panel will display the top entries.
-3. Close the leaderboard panel by clicking the **Close** button.
+3. Click the **Clear** button in the leaderboard panel to remove old leaderboard records.
+4. Close the leaderboard panel by clicking the **Close** button.
 
 ## Asset References
 
